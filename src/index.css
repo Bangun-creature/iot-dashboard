@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@theme {
+  --font-robotoflex: "Roboto Flex", sans-serif;
+  --font-notosans: "Noto Sans", sans-serif;
+  --font-zalando: "Zalando Sans", sans-serif;
+}
