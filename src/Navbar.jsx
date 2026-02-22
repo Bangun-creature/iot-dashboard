@@ -18,11 +18,12 @@ export default function Navbar(){
 
     return(
         <div className="relative h-screen">
-            <div className="bg-blue-500 w-full h-fit">
-                <p onClick={handleClickNavbar}>Navbar atas</p>
+            <div className="bg-blue-500 w-full flex justify-between px-[5%] py-2">
+                <p>iot-dashboard</p>
+                <p onClick={handleClickNavbar}>Menu</p>
             </div>
-            <div ref={backgroundNavbar} onClick={handleCloseNavbar} className={`${isOpenNavbar ? 'absolute' : 'hidden'} backdrop-blur-lg left-0 top-0 bottom-0 w-full`}>
-                <div className="bg-slate-400 w-[75%] flex flex-col gap-1 h-full">
+            <div ref={backgroundNavbar} onClick={handleCloseNavbar} className={`${isOpenNavbar ? 'opacity-100 visible' : 'opacity-0 invisible'} transition-opacity duration-200 absolute backdrop-blur-lg left-0 top-0 bottom-0 w-full `}>
+                <div className={`bg-slate-400 w-[75%] flex flex-col gap-1 h-full ${isOpenNavbar ? 'translate-x-0' : '-translate-x-75'} transition-transform duration-300`}>
                 <div className="flex gap-3 items-center px-[5%] py-2">
                     <img src="" alt="" className="bg-red-300 w-10 h-10 rounded-full" />
                     <div>
