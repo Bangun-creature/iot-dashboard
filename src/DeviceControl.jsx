@@ -12,9 +12,9 @@ export default function DeviceControl() {
     try {
       const rawData = await axios.get('http://localhost:3000/api/buttons');
 
-      console.log(rawData);
+      console.log(`Hasil load data: ${JSON.stringify(rawData.data)}`);
       // Set state nya langsung ambil data dari rest api
-      setSwitches(rawData.data.buttons);
+      setSwitches(rawData.data.payload.datas);
 
       // setSwitches
     } catch (error) {
@@ -34,7 +34,7 @@ export default function DeviceControl() {
       const newSwitch = {
         id: Date.now(), // Gunakan timestamp agar ID unik
         name: `Device ${newId}`,
-        isOn: false,
+        isOn: 0,
         gpio: "Not Set"
       };
 
