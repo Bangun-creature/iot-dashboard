@@ -3,9 +3,29 @@ import React, { useEffect, useState } from 'react';
 
 export default function DeviceControl() {
   // State untuk menyimpan daftar saklar
-  const [switches, setSwitches] = useState([
-    { id: 1, name: "Main Light", isOn: false, gpio: "GPIO 2" }
-  ]);
+  // const [switches, setSwitches] = useState([
+  //   { id: 1, name: "Main Light", isOn: false, gpio: "GPIO 2" }
+  // ]);
+  const [switches, setSwitches] = useState([]);
+
+  const loadedDataButton = async ()=>{
+    try {
+      const rawData = await axios.get('http://localhost:3000/api/buttons');
+
+      console.log(rawData);
+      // Set state nya langsung ambil data dari rest api
+      setSwitches(rawData.data.buttons);
+
+      // setSwitches
+    } catch (error) {
+      console.log(`There is an error loaded data: ${error}`);
+    }
+  }
+
+  // Load data pertama kali saat render:
+  useEffect(()=>{
+    loadedDataButton();
+  },[])
 
   // Fungsi tambah saklar (Max 8)
   const addSwitch = async () => {
@@ -20,11 +40,11 @@ export default function DeviceControl() {
 
       try {
         // Langsung kirimkan ke api untuk object switch yang baru
-        const rawData = await axios.post(`http://localhost:3000/api/buttons/add`, newSwitch);
+        const rawData = await axios.post(`http://localhost:3000/api/buttons`, newSwitch);
         // Update state untuk render di api
         setSwitches([...switches, newSwitch]);
 
-        console.log(`Response: ${JSON.stringify(rawData.data)}`);
+        console.log(`Response add button: ${JSON.stringify(rawData.data)}`);
       } catch (error) {
         console.log(`Ada error: ${error}`);
       }
