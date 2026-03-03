@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 export default function DeviceControl() {
   // State untuk menyimpan daftar saklar
@@ -7,7 +8,7 @@ export default function DeviceControl() {
   ]);
 
   // Fungsi tambah saklar (Max 8)
-  const addSwitch = () => {
+  const addSwitch = async () => {
     if (switches.length < 8) {
       const newId = switches.length + 1;
       const newSwitch = {
@@ -16,17 +17,42 @@ export default function DeviceControl() {
         isOn: false,
         gpio: "Not Set"
       };
-      setSwitches([...switches, newSwitch]);
+
+      try {
+        // Langsung kirimkan ke api untuk object switch yang baru
+        const rawData = await axios.post(`http://localhost:3000/api/buttons/add`, newSwitch);
+        // Update state untuk render di api
+        setSwitches([...switches, newSwitch]);
+
+        console.log(`Response: ${JSON.stringify(rawData.data)}`);
+      } catch (error) {
+        console.log(`Ada error: ${error}`);
+      }
+
+      // Bongkar switch nya wadahin di array dan tambahkan newSwitch 
     } else {
       alert("Maksimal 8 tombol saklar tercapai!");
     }
   };
 
   // Fungsi toggle status saklar
-  const toggleSwitch = (id) => {
+  const toggleSwitch = async (id) => {
     setSwitches(switches.map(sw => 
       sw.id === id ? { ...sw, isOn: !sw.isOn } : sw
     ));
+
+    const targetSwitch = switches.find((sw)=> (sw.id == id));
+
+    try {
+      const rawData = await axios.post(`http://localhost:3000/api/buttons/${id}/control`, {
+        isOn: targetSwitch.isOn,
+        name: targetSwitch.name
+      });
+
+      console.log(rawData.data);
+    } catch (error) {
+      console.log(`There is an error ${error}`);
+    }
   };
 
   // Fungsi hapus saklar
