@@ -76,8 +76,16 @@ export default function DeviceControl() {
   };
 
   // Fungsi hapus saklar
-  const removeSwitch = (id) => {
-    setSwitches(switches.filter(sw => sw.id !== id));
+  const removeSwitch = async(id) => {
+    try {
+      const rawData = await axios.delete(`http://localhost:3000/api/buttons/${id}`);
+      console.log(`Response Delete Button: ${JSON.stringify(rawData.data)}`);
+      
+      setSwitches(switches.filter(sw => sw.id !== id));
+    } catch (error) {
+      console.log(`There is an error in process deleting data: ${error}`);
+    }
+
   };
 
   return (
