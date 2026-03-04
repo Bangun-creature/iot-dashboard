@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ModalRegisterCard from './ModalRegisterCard';
+import axios from 'axios';
 
 export default function AccessControl() {
   // Data user terakhir yang melakukan TAP (Real-time Simulation)
@@ -20,10 +21,25 @@ export default function AccessControl() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fungsi yang dipanggil saat user klik Save di dalam Modal
-  const handleSaveNewUser = (data) => {
-    console.log("Data diterima di Parent:", data);
-    // Di sini kamu bisa melakukan integrasi database (POST ke Node.js)
-    alert(`Berhasil mendaftarkan ${data.name} dengan UID ${data.uid}`);
+  const handleSaveNewUser = async(data) => {
+    // console.log("Data diterima di Parent:", data);
+    // // Di sini kamu bisa melakukan integrasi database (POST ke Node.js)
+    // alert(`Berhasil mendaftarkan ${data.name} dengan UID ${data.uid}`);
+
+    const rfid = "2900940E95";
+    const dataRfid = {
+      rfid_code: rfid,
+      status: false,
+    }
+
+    try {
+      const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, dataRfid
+      )
+
+      console.log(`Respon rfid : ${JSON.stringify(rawData.data)}`);
+    } catch (error) {
+      console.log(`There is an error in rfid save new user: ${error}`);
+    }
   };
 
   return (
@@ -57,14 +73,17 @@ export default function AccessControl() {
             </div>
           </div>
 
-          <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={() => setIsModalOpen(true)}>
+          {/* <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={() => setIsModalOpen(true)}>
+            + Register New Card
+          </button> */}
+          <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={handleSaveNewUser}>
             + Register New Card
           </button>
-          <ModalRegisterCard 
+          {/* <ModalRegisterCard 
            isOpen={isModalOpen} 
            onClose={() => setIsModalOpen(false)} 
            onSave={handleSaveNewUser}
-        />
+        /> */}
         </div>
 
         {/* Access Logs Table */}
