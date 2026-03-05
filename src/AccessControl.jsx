@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ModalRegisterCard from './ModalRegisterCard';
 import axios from 'axios';
 
@@ -18,7 +18,23 @@ export default function AccessControl() {
     { id: 3, uid: "99:FF:EE:DD", user: "Romi Indrajaya", time: "09:15:20 AM", status: "Granted" },
   ]);
 
+  const [listRfid, setListRfid] = useState([]);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleLoadListRfid = async()=>{
+    try {
+      const rawData = await axios.get(`http://localhost:3000/api/rfid`);
+      console.log(`Ini data dari tabel rfid: ${JSON.stringify(rawData.data)}`);
+      setListRfid(rawData.data.payload.datas);
+    } catch (error) {
+      console.log(`There is an error : ${error}`);
+    }
+  }
+
+  useEffect(()=>{
+    handleLoadListRfid();
+  },[])
 
   // Fungsi yang dipanggil saat user klik Save di dalam Modal
   const handleSaveNewUser = async(data) => {
@@ -36,6 +52,7 @@ export default function AccessControl() {
       const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, dataRfid
       )
 
+      setListRfid((prev)=> [...prev, dataRfid]);
       console.log(`Respon rfid : ${JSON.stringify(rawData.data)}`);
     } catch (error) {
       console.log(`There is an error in rfid save new user: ${error}`);
@@ -103,17 +120,17 @@ export default function AccessControl() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">
-                {logs.map((log) => (
+                {listRfid.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs">{log.time}</td>
+                    <td className="px-6 py-4 font-mono text-xs">time</td>
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-200">{log.user}</div>
-                      <div className="text-[10px] text-slate-500 font-mono">{log.uid}</div>
+                      <div className="font-semibold text-slate-200">Username</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{listRfid.rfid_code}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase
-                        ${log.status === 'Granted' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                        {log.status}
+                        ${log.status === 'true' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                        {listRfid.status}
                       </span>
                     </td>
                   </tr>
