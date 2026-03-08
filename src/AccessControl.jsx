@@ -42,21 +42,23 @@ export default function AccessControl() {
     // // Di sini kamu bisa melakukan integrasi database (POST ke Node.js)
     // alert(`Berhasil mendaftarkan ${data.name} dengan UID ${data.uid}`);
 
-    const rfid = "2900940E95";
-    const dataRfid = {
-      rfid_code: rfid,
-      status: false,
-    }
+    // const rfid = "2900940E95";
+    // const dataRfid = {
+    //   rfid_code: rfid,
+    //   status: false,
+    // }
 
-    try {
-      const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, dataRfid
-      )
+    setIsModalOpen(true);
 
-      setListRfid((prev)=> [...prev, dataRfid]);
-      console.log(`Respon rfid : ${JSON.stringify(rawData.data)}`);
-    } catch (error) {
-      console.log(`There is an error in rfid save new user: ${error}`);
-    }
+    // try {
+    //   const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, dataRfid
+    //   )
+
+    //   setListRfid((prev)=> [...prev, dataRfid]);
+    //   console.log(`Respon rfid : ${JSON.stringify(rawData.data)}`);
+    // } catch (error) {
+    //   console.log(`There is an error in rfid save new user: ${error}`);
+    // }
   };
 
   return (
@@ -96,11 +98,11 @@ export default function AccessControl() {
           <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={handleSaveNewUser}>
             + Register New Card
           </button>
-          {/* <ModalRegisterCard 
+          <ModalRegisterCard 
            isOpen={isModalOpen} 
            onClose={() => setIsModalOpen(false)} 
            onSave={handleSaveNewUser}
-        /> */}
+        />
         </div>
 
         {/* Access Logs Table */}
