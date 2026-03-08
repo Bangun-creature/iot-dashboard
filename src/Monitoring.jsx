@@ -15,31 +15,62 @@ export default function Monitoring() {
     
   };
 
+  const [formData, setFormData] = useState({
+    name: "",
+    unit: "",
+    min: 0,
+    max: 100
+  })
+
+  const handleChange = (e)=>{
+    const {name, value} = e.target;
+    setFormData({
+      ...formData, 
+      [name]: value
+    })
+  }
+
   const handleSubmitButton = async()=>{
-    if (gauges.length < 6) {
-      const newId = Date.now();
+    // e.preventDefault();
+
+    if (gauges.length >= 6) {
+      alert("Maksimal 6 Meter Gauge untuk menjaga visibilitas!");
+    }
+
+      // const newId = Date.now();
       const newGauge = {
-        id: newId,
-        name: `New Sensor ${gauges.length + 1}`,
-        value: 10,
-        unit: "Volt",
-        min: 0,
-        max: 100
+        id: Date.now(),
+        name: formData.name,
+        value: 0,
+        unit: formData.unit,
+        min: Number(formData.min),
+        max: Number(formData.max)
       }
       try {
+        console.log(`Ini data barunya: ${JSON.stringify(newGauge)}`);
         const rawData = await axios.post(`http://localhost:3000/api/metergauge`, newGauge);
 
         setGauges([...gauges, newGauge]);
 
+        
+        setFormData({
+          name: "",
+          unit: "",
+          min: 0,
+          max: 100
+        })
+        
+        setIsOpenModal(false);
+        
         console.log(`Response add gauge: ${JSON.stringify(rawData.data)}`);
-
       } catch (error) {
-        console.log(`There is an error when add gauge: ${error}`);
+        console.log(`There is an error when add gauge: ${error}
+          `);
+          alert("Gagal menambah gauge ke database");
       }
 
-    } else {
-      alert("Maksimal 6 Meter Gauge untuk menjaga visibilitas!");
-    }
+    
+    
   }
 
   const removeGauge = async(id) => {
@@ -107,12 +138,15 @@ export default function Monitoring() {
           <p className="text-slate-400 text-sm">Tap the RFID card to the reader device</p>
         </div>
         
-        <form className="flex flex-col gap-6">
+        <form onSubmit={handleSubmitButton} className="flex flex-col gap-6">
           {/* Status Scanning Visual */}
           <div className="flex flex-col gap-2">
             <label className="text-slate-400 text-xs font-semibold ml-1 uppercase">Name Gauge Meter</label>
             <input 
               autoFocus
+              name='name'
+              value={formData.name}
+              onChange={handleChange}
               type="text" 
               placeholder="Voltage Meter, etc" 
               className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-700"
@@ -123,6 +157,9 @@ export default function Monitoring() {
             <label className="text-slate-400 text-xs font-semibold ml-1 uppercase">Unit</label>
             <input 
               autoFocus
+              name='unit'
+              value={formData.unit}
+              onChange={handleChange}
               type="text" 
               placeholder="volt, ampere, etc" 
               className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-700"
@@ -134,6 +171,9 @@ export default function Monitoring() {
             <label className="text-slate-400 text-xs font-semibold ml-1 uppercase">Min Value</label>
             <input 
               autoFocus
+              name='min'
+              value={formData.min}
+              onChange={handleChange}
               type="text" 
               placeholder="0" 
               className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-700"
@@ -143,6 +183,9 @@ export default function Monitoring() {
             <label className="text-slate-400 text-xs font-semibold ml-1 uppercase">Max Value</label>
             <input 
               autoFocus
+              name='max'
+              value={formData.max}
+              onChange={handleChange}
               type="text" 
               placeholder="200/etc" 
               className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-700"
