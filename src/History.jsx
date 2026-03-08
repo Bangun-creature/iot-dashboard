@@ -5,11 +5,25 @@ export default function History() {
   const [activeTab, setActiveTab] = useState('sensor'); // 'sensor', 'rfid', atau 'button'
 
   // Data Dummy Tren Sensor (Meter Gauge History)
-  const sensorData = [
+  const sensorDataVoltage = [
     { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
     { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
-    { time: '16:00', val: 218 }, { time: '18:00', val: 222 },
+    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
   ];
+
+  const sensorDataCurrent = [
+    { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
+    { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
+    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
+  ];
+
+  const sensorDataTemperature = [
+    { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
+    { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
+    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
+  ];
+
+
 
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8 pb-20">
@@ -33,11 +47,13 @@ export default function History() {
         
         {/* 1. HISTORY METER GAUGE (Grafik) */}
         {activeTab === 'sensor' && (
+          <div className='flex flex-col gap-5'>
+
           <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
             <h3 className="text-slate-200 font-semibold mb-8 uppercase text-xs tracking-[0.2em]">Voltage Stability Analysis (24h)</h3>
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={sensorData}>
+                <AreaChart data={sensorDataVoltage}>
                   <defs>
                     <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
@@ -52,6 +68,27 @@ export default function History() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </div>
+          <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
+            <h3 className="text-slate-200 font-semibold mb-8 uppercase text-xs tracking-[0.2em]">Voltage Stability Analysis (24h)</h3>
+            <div className="h-[350px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={sensorDataVoltage}>
+                  <defs>
+                    <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                  <XAxis dataKey="time" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
+                  <Area type="monotone" dataKey="val" stroke="#3b82f6" strokeWidth={3} fill="url(#colorVal)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
           </div>
         )}
 

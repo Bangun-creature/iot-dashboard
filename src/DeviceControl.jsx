@@ -15,25 +15,16 @@ export default function DeviceControl() {
   // ]);
 
   const [switches, setSwitches] = useState([]);
-
-
-
   const loadedDataButton = async ()=>{
 
     try {
 
       const rawData = await axios.get('http://localhost:3000/api/buttons');
-
-
-
       console.log(`Hasil load data: ${JSON.stringify(rawData.data)}`);
 
       // Set state nya langsung ambil data dari rest api
 
       setSwitches(rawData.data.payload.datas);
-
-
-
       // setSwitches
 
     } catch (error) {
@@ -61,19 +52,13 @@ export default function DeviceControl() {
   // Fungsi tambah saklar (Max 8)
 
   const addSwitch = async () => {
-
     if (switches.length < 8) {
-
       const newId = switches.length + 1;
-
       const newSwitch = {
 
         id: Date.now(), // Gunakan timestamp agar ID unik
-
         name: `Device ${newId}`,
-
         status: false,
-
         gpio: "Not Set"
 
       };
@@ -85,29 +70,17 @@ export default function DeviceControl() {
         // Langsung kirimkan ke api untuk object switch yang baru
 
         const rawData = await axios.post(`http://localhost:3000/api/buttons`, newSwitch);
-
         // Update state untuk render di api
-
         setSwitches([...switches, newSwitch]);
-
-
-
         console.log(`Response add button: ${JSON.stringify(rawData.data)}`);
 
       } catch (error) {
-
         console.log(`Ada error: ${error}`);
-
       }
 
-
-
       // Bongkar switch nya wadahin di array dan tambahkan newSwitch
-
     } else {
-
       alert("Maksimal 8 tombol saklar tercapai!");
-
     }
 
   };
@@ -115,39 +88,22 @@ export default function DeviceControl() {
 
 
   // Fungsi toggle status saklar
-
   const toggleSwitch = async (id) => {
-
     const itemSwitch = switches.find((sw)=> sw.id == id);
-
-
-
     const newStatus = !itemSwitch.status;
 
-
-
     setSwitches(switches.map((sw)=> sw.id == id ? {...sw, status: newStatus} : sw));
-
-
 
     try {
 
       const rawData = await axios.post(`http://localhost:3000/api/buttons/${id}/control`, {
-
         status: newStatus,
-
         name: itemSwitch.name
-
       });
 
-
-
       console.log(rawData.data);
-
     } catch (error) {
-
       console.log(`There is an error ${error}`);
-
     }
 
   };
@@ -155,9 +111,7 @@ export default function DeviceControl() {
 
 
   // Fungsi hapus saklar
-
   const removeSwitch = async(id) => {
-
     try {
 
       const rawData = await axios.delete(`http://localhost:3000/api/buttons/${id}`);

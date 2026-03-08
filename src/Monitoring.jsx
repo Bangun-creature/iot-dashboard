@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GaugeComponent from 'react-gauge-component';
+import axios from 'axios';
 
 export default function Monitoring() {
   // State untuk daftar sensor (Gauge)
@@ -12,9 +13,9 @@ export default function Monitoring() {
       const newId = Date.now();
       const newGauge = {
         id: newId,
-        label: `New Sensor ${gauges.length + 1}`,
-        value: 0,
-        unit: "Units",
+        name: `New Sensor ${gauges.length + 1}`,
+        value: 10,
+        unit: "Volt",
         min: 0,
         max: 100
       }
@@ -52,8 +53,11 @@ export default function Monitoring() {
       const rawData = await axios.get(`http://localhost:3000/api/metergauge`);
 
       console.log(`Ini meter gauge kita: ${JSON.stringify(rawData.data)}`);
-
-      setGauges(rawData.data.payload.datas);
+      if(rawData.data.payload.datas.length > 0){
+        setGauges(rawData.data.payload.datas);
+      } else {
+        setGauges([])
+      }
     } catch (error) {
       console.log(`There is an error when get meter gauge from backend: ${error}`);
     }
@@ -84,7 +88,8 @@ export default function Monitoring() {
 
       {/* Grid Monitoring */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-10">
-        {gauges.map((gauge) => (
+        {gauges.length > 0 && (
+        gauges.map((gauge) => (
           <div key={gauge.id} className="bg-slate-800 border border-slate-700 p-6 rounded-3xl shadow-xl flex flex-col items-center relative group">
             
             {/* Action Buttons (Hapus) */}
@@ -96,7 +101,7 @@ export default function Monitoring() {
             </button>
 
             <h3 className="text-slate-300 font-robotoflex font-medium mb-4 uppercase tracking-widest text-xs">
-              {gauge.label}
+              {gauge.name}
             </h3>
 
             {/* Gauge Component */}
@@ -131,13 +136,21 @@ export default function Monitoring() {
     },
     tickLabels: { 
       type: 'inner', 
-      ticks: [{ value: gauge.min }, { value: gauge.max }] 
+      ticks: [{ value: gauge.min }, { value: gauge.max }],
+      defaultTickValueConfig: { 
+      hideUnit: true,
+      formatTextValue: (val) => val // Memastikan hanya angka yang muncul
+    } 
     }
   }}
 />
             </div>
           </div>
-        ))}
+        ))
+        )}
+        {gauges.length == 0 && (
+          <p className='text-slate-200 font-notosans font-light text-sm'>No meter gauge</p>
+        )}
       </div>
     </div>
   );

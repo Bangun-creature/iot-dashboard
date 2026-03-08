@@ -122,15 +122,15 @@ export default function AccessControl() {
               <tbody className="divide-y divide-slate-700/50">
                 {listRfid.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs">time</td>
+                    <td className="px-6 py-4 font-mono text-xs">{log.created_at}</td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-200">Username</div>
-                      <div className="text-[10px] text-slate-500 font-mono">{listRfid.rfid_code}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{log.rfid_code}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase
                         ${log.status === 'true' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                        {listRfid.status}
+                        {log.status}
                       </span>
                     </td>
                   </tr>
