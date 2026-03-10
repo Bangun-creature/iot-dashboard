@@ -8,7 +8,9 @@ export default function History() {
   // Data Dummy Tren Sensor (Meter Gauge History)
   const [listDataMeterGauge, setListDataMeterGauge] = useState([])
   const [listRfid, setListRfid] = useState([]);
+  const [listButton, setListButton] = useState([]);
 
+  // GRAPH
   const loadedDataGraph = async()=>{
     try {
       const rawData = await axios.get(`http://localhost:3000/api/history/graph`);
@@ -24,6 +26,7 @@ export default function History() {
     loadedDataGraph();
   },[])
 
+  // RFID
    const handleLoadListRfid = async()=>{
     try {
       const rawData = await axios.get(`http://localhost:3000/api/history/rfid`);
@@ -36,6 +39,21 @@ export default function History() {
 
   useEffect(()=>{
     handleLoadListRfid();
+  },[])
+
+  // BUTTON
+  const loadedDataButton = async()=>{
+    try {
+      const rawData = await axios.get(`http://localhost:3000/api/history/buttons`)
+      console.log(`Ini data history button: ${JSON.stringify(rawData.data)}`);
+      setListButton(rawData.data.payload.datas)
+    } catch (error) {
+      console.log(`There is an error history buttons: ${error}`);
+    }
+  } 
+
+  useEffect(()=>{
+    loadedDataButton();
   },[])
 
 
@@ -105,7 +123,7 @@ export default function History() {
                   <tr key={index} className="hover:bg-slate-700/30 transition-all">
                     <td className="px-8 py-5 font-mono text-xs text-slate-500">{item.updated_at}</td>
                     <td className="px-8 py-5 font-semibold text-slate-200">{item.username}<span className="block text-[10px] font-mono text-slate-500">{item.rfid_code}</span></td>
-                    <td className="px-8 py-5"><span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[10px] font-bold">{item.status == "true" ? "GRANTED" : "FALSE"}</span></td>
+                    <td className="px-8 py-5"><span className={`${item.status == "true" ? "bg-green-500/10 text-green-500" : "bg-slate-100 text-red-500"} px-3 py-1 rounded-full text-[10px] font-bold`}>{item.status == "true" ? "GRANTED" : "FALSE"}</span></td>
                   </tr>
                 ))}
               </tbody>
@@ -116,18 +134,18 @@ export default function History() {
         {/* 3. HISTORY BUTTON (Activity Log) */}
         {activeTab === 'button' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex items-center justify-between">
+            {listButton.map((item, index) => (
+              <div key={index} className="bg-slate-800 p-6 rounded-2xl border border-slate-700 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${i % 2 === 0 ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-700 text-slate-500'}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.status === 1 ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-700 text-slate-500'}`}>
                     ⏻
                   </div>
                   <div>
-                    <p className="text-slate-200 font-bold text-sm">Relay Lampu Utama</p>
-                    <p className="text-slate-500 text-[10px] uppercase">Action: {i % 2 === 0 ? 'Turned ON' : 'Turned OFF'}</p>
+                    <p className="text-slate-200 font-bold text-sm">{item.name}</p>
+                    <p className="text-slate-500 text-[10px] uppercase">Action: {item.status === 1 ? 'Turned ON' : 'Turned OFF'}</p>
                   </div>
                 </div>
-                <p className="text-slate-600 font-mono text-[10px]">10:20 AM</p>
+                <p className="text-slate-600 font-mono text-[10px]">{item.updated_at}</p>
               </div>
             ))}
           </div>
