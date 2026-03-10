@@ -1,27 +1,42 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function History() {
   const [activeTab, setActiveTab] = useState('sensor'); // 'sensor', 'rfid', atau 'button'
 
   // Data Dummy Tren Sensor (Meter Gauge History)
-  const sensorDataVoltage = [
-    { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
-    { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
-    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
-  ];
+  const [listDataMeterGauge, setListDataMeterGauge] = useState([])
+  const [listRfid, setListRfid] = useState([]);
 
-  const sensorDataCurrent = [
-    { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
-    { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
-    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
-  ];
+  const loadedDataGraph = async()=>{
+    try {
+      const rawData = await axios.get(`http://localhost:3000/api/history/graph`);
 
-  const sensorDataTemperature = [
-    { time: '08:00', val: 210 }, { time: '10:00', val: 220 },
-    { time: '12:00', val: 215 }, { time: '14:00', val: 225 },
-    { time: '16:00', val: 218 }, { time: '18:00', val: 222 }, { time: '20:00', val: 2 }
-  ];
+      console.log(`Ini data history graph: ${JSON.stringify(rawData.data.payload.datas)}`);
+      setListDataMeterGauge(rawData.data.payload.datas);
+    } catch (error) {
+      console.log(`There is an error get history graph: ${error}`);
+    }
+  }
+
+  useEffect(()=>{
+    loadedDataGraph();
+  },[])
+
+   const handleLoadListRfid = async()=>{
+    try {
+      const rawData = await axios.get(`http://localhost:3000/api/history/rfid`);
+      console.log(`Ini data dari tabel rfid: ${JSON.stringify(rawData.data)}`);
+      setListRfid(rawData.data.payload.datas);
+    } catch (error) {
+      console.log(`There is an error : ${error}`);
+    }
+  }
+
+  useEffect(()=>{
+    handleLoadListRfid();
+  },[])
 
 
 
@@ -48,12 +63,12 @@ export default function History() {
         {/* 1. HISTORY METER GAUGE (Grafik) */}
         {activeTab === 'sensor' && (
           <div className='flex flex-col gap-5'>
-
-          <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
-            <h3 className="text-slate-200 font-semibold mb-8 uppercase text-xs tracking-[0.2em]">Voltage Stability Analysis (24h)</h3>
+            {listDataMeterGauge.map((item, index)=>(
+          <div key={index} className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
+            <h3 className="text-slate-200 font-semibold mb-8 uppercase text-xs tracking-[0.2em]">{item.title}</h3>
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={sensorDataVoltage}>
+                <AreaChart data={item.data}>
                   <defs>
                     <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
@@ -69,31 +84,13 @@ export default function History() {
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl">
-            <h3 className="text-slate-200 font-semibold mb-8 uppercase text-xs tracking-[0.2em]">Voltage Stability Analysis (24h)</h3>
-            <div className="h-[350px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={sensorDataVoltage}>
-                  <defs>
-                    <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                  <XAxis dataKey="time" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '12px', color: '#fff' }} />
-                  <Area type="monotone" dataKey="val" stroke="#3b82f6" strokeWidth={3} fill="url(#colorVal)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+            ))}
+          
           </div>
         )}
 
         {/* 2. HISTORY RFID (Table) */}
-        {activeTab === 'rfid' && (
+        {activeTab === 'rfid' && listRfid.length > 0 && (
           <div className="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden shadow-xl">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-900/50 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
@@ -104,11 +101,11 @@ export default function History() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50 text-slate-300">
-                {[1, 2, 3, 4].map((i) => (
-                  <tr key={i} className="hover:bg-slate-700/30 transition-all">
-                    <td className="px-8 py-5 font-mono text-xs text-slate-500">2026-03-01 09:45:0{i}</td>
-                    <td className="px-8 py-5 font-semibold text-slate-200">Bangun W.J. <span className="block text-[10px] font-mono text-slate-500">UID: 88:AA:BB:CC</span></td>
-                    <td className="px-8 py-5"><span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[10px] font-bold">GRANTED</span></td>
+                {listRfid.map((item, index) => (
+                  <tr key={index} className="hover:bg-slate-700/30 transition-all">
+                    <td className="px-8 py-5 font-mono text-xs text-slate-500">{item.updated_at}</td>
+                    <td className="px-8 py-5 font-semibold text-slate-200">{item.username}<span className="block text-[10px] font-mono text-slate-500">{item.rfid_code}</span></td>
+                    <td className="px-8 py-5"><span className="bg-green-500/10 text-green-500 px-3 py-1 rounded-full text-[10px] font-bold">{item.status == "true" ? "GRANTED" : "FALSE"}</span></td>
                   </tr>
                 ))}
               </tbody>

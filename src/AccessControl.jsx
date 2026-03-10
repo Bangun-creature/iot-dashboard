@@ -47,8 +47,15 @@ export default function AccessControl() {
     //   rfid_code: rfid,
     //   status: false,
     // }
+    console.log(`Data new user rfid : ${JSON.stringify(data)}`);
 
-    setIsModalOpen(true);
+    try {
+      const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, data);
+
+      console.log(`Response add rfid : ${JSON.stringify(rawData.data)}`);
+    } catch (error) {
+      console.log(`There is an error when add new rfid: ${error}`);
+    }
 
     // try {
     //   const rawData = await axios.post(`http://localhost:3000/api/rfid/save`, dataRfid
@@ -71,31 +78,32 @@ export default function AccessControl() {
         </p>
       </div>
 
+{listRfid.length > 0 && (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Current Status Card */}
         <div className="lg:col-span-1 flex flex-col gap-6">
           <div className={`p-8 rounded-3xl border-2 flex flex-col items-center justify-center transition-all duration-500
-            ${lastTap.status === "Granted" ? 'bg-green-900/20 border-green-500/50' : 'bg-red-900/20 border-red-500/50'}`}>
+            ${listRfid[listRfid.length-1].status === "true" ? 'bg-green-900/20 border-green-500/50' : 'bg-red-900/20 border-red-500/50'}`}>
             
             <div className={`w-20 h-20 rounded-full mb-4 flex items-center justify-center text-3xl
-              ${lastTap.status === "Granted" ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-              {lastTap.status === "Granted" ? "✓" : "✕"}
+              ${listRfid[listRfid.length-1].status === "true" ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+              {listRfid[listRfid.length-1].status === "true" ? "✓" : "✕"}
             </div>
             
-            <h2 className="text-slate-200 text-xl font-bold uppercase tracking-widest">Access {lastTap.status}</h2>
-            <p className="text-slate-400 font-mono mt-2">{lastTap.id}</p>
+            <h2 className="text-slate-200 text-xl font-bold uppercase tracking-widest">Access {listRfid[listRfid.length-1].status}</h2>
+            <p className="text-slate-400 font-mono mt-2">{listRfid[listRfid.length-1].rfid_code}</p>
             
             <div className="mt-6 text-center">
-              <p className="text-slate-200 text-2xl font-semibold">{lastTap.user}</p>
-              <p className="text-slate-500 text-sm mt-1">{lastTap.time}</p>
+              <p className="text-slate-200 text-2xl font-semibold">{listRfid[listRfid.length-1].username}</p>
+              <p className="text-slate-500 text-sm mt-1">{listRfid[listRfid.length-1].updated_at}</p>
             </div>
           </div>
 
           {/* <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={() => setIsModalOpen(true)}>
             + Register New Card
           </button> */}
-          <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={handleSaveNewUser}>
+          <button className="bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 py-4 rounded-2xl font-bold transition-all" onClick={()=>{setIsModalOpen(true)}}>
             + Register New Card
           </button>
           <ModalRegisterCard 
@@ -126,7 +134,7 @@ export default function AccessControl() {
                   <tr key={log.id} className="hover:bg-slate-700/30 transition-colors">
                     <td className="px-6 py-4 font-mono text-xs">{log.created_at}</td>
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-slate-200">Username</div>
+                      <div className="font-semibold text-slate-200">{log.username}</div>
                       <div className="text-[10px] text-slate-500 font-mono">{log.rfid_code}</div>
                     </td>
                     <td className="px-6 py-4">
@@ -143,6 +151,7 @@ export default function AccessControl() {
         </div>
 
       </div>
+)}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 export default function ModalRegisterCard({ isOpen, onClose, onSave }) {
   const [newCardName, setNewCardName] = useState("");
-  const [detectedUid, setDetectedUid] = useState("Scanning..."); // Nanti diupdate via Socket.io
+  const [detectedUid, setDetectedUid] = useState("2900940E95"); // Nanti diupdate via Socket.io
 
   if (!isOpen) return null;
 
@@ -11,7 +11,7 @@ export default function ModalRegisterCard({ isOpen, onClose, onSave }) {
     if (!newCardName) return alert("Nama tidak boleh kosong!");
     
     // Kirim data ke parent (AccessControl)
-    onSave({ uid: detectedUid, name: newCardName });
+    onSave({ username: newCardName, rfid_code: detectedUid, status: "false"});
     
     // Reset form
     setNewCardName("");
