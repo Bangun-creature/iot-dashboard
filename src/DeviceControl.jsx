@@ -1,10 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ModalAddButton from './ModalAddButton'; // Pastikan path benar
+import ConfigurationButton from './ConfigurationButton';
 
 export default function DeviceControl() {
   const [switches, setSwitches] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(true);
+  const [idButtonConfiguration, setIdButtonConfiguration] = useState(null);
 
   const loadedDataButton = async () => {
     try {
@@ -73,6 +76,13 @@ export default function DeviceControl() {
     }
   };
 
+  // OpenConfiguration
+  function handleConfigurationOpen(id){
+    setIsConfigurationOpen(true);
+    setIdButtonConfiguration(id)
+    console.log(`Id ${id}`)
+  }
+
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8">
       <div className="flex justify-between items-end border-b border-slate-800 pb-6">
@@ -115,9 +125,15 @@ export default function DeviceControl() {
               </label>
             </div>
             <div className={`h-1 w-full rounded-full mt-2 transition-all duration-500 ${sw.status == 1 ? 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-slate-700'}`}></div>
+            <button onClick={()=>{handleConfigurationOpen(sw.id)}} className='text-slate-100 text-xs font-medium font-notosans bg-orange-600 rounded-lg w-fit px-2 py-1'>Configuration</button>
           </div>
         ))}
       </div>
+      <ConfigurationButton 
+      isOpen={isConfigurationOpen}
+      onClose={()=> setIsConfigurationOpen(false)}
+      idButtonConfiguration={idButtonConfiguration}
+      />
 
       <ModalAddButton 
         isOpen={isModalOpen} 

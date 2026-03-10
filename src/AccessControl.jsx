@@ -132,7 +132,7 @@ export default function AccessControl() {
               <tbody className="divide-y divide-slate-700/50">
                 {listRfid.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs">{log.created_at}</td>
+                    <td className="px-6 py-4 font-mono text-xs">{log.updated_at}</td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-200">{log.username}</div>
                       <div className="text-[10px] text-slate-500 font-mono">{log.rfid_code}</div>
