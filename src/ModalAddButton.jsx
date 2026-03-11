@@ -6,7 +6,7 @@ export default function ModalAddButton({ isOpen, onClose, onSave }) {
     pin_number: ""
   });
 
-  if (!isOpen) return null;
+  if(!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();

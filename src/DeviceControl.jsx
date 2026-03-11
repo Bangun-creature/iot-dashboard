@@ -6,7 +6,7 @@ import ConfigurationButton from './ConfigurationButton';
 export default function DeviceControl() {
   const [switches, setSwitches] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfigurationOpen, setIsConfigurationOpen] = useState(true);
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const [idButtonConfiguration, setIdButtonConfiguration] = useState(null);
 
   const loadedDataButton = async () => {
@@ -125,7 +125,7 @@ export default function DeviceControl() {
               </label>
             </div>
             <div className={`h-1 w-full rounded-full mt-2 transition-all duration-500 ${sw.status == 1 ? 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-slate-700'}`}></div>
-            <button onClick={()=>{handleConfigurationOpen(sw.id)}} className='text-slate-100 text-xs font-medium font-notosans bg-orange-600 rounded-lg w-fit px-2 py-1'>Configuration</button>
+            <button onClick={()=>{handleConfigurationOpen(sw.id)}} className='text-slate-100 text-xs font-medium font-notosans bg-emerald-600 rounded-lg w-fit px-2 py-1'>Configuration</button>
           </div>
         ))}
       </div>

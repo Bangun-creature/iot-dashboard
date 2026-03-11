@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import GaugeComponent from 'react-gauge-component';
 import axios from 'axios';
+import ConfigurationMeterGauge from './ConfigurationMeterGauge';
 
 export default function Monitoring() {
   // State untuk daftar sensor (Gauge)
@@ -8,6 +9,8 @@ export default function Monitoring() {
   ]);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
+  const [idMeterConfiguration, setIdMeterConfiguration] = useState(null);
 
   // Fungsi tambah Gauge (Max 6)
   const addGauge = async() => {
@@ -105,6 +108,12 @@ export default function Monitoring() {
   useEffect(()=>{
     loadedMeterGauge();
   },[])
+
+  function handleConfigurationOpen(id){
+    setIsConfigurationOpen(true);
+    setIdMeterConfiguration(id);
+    console.log(`Id ${id}`)
+  }
 
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8">
@@ -273,6 +282,7 @@ export default function Monitoring() {
   }}
 />
             </div>
+            <button onClick={()=>{handleConfigurationOpen(gauge.id)}} className='text-slate-100 text-xs font-medium font-notosans bg-emerald-600 rounded-lg w-fit px-2 py-1 mt-5'>Configuration</button>
           </div>
         ))
         )}
@@ -280,6 +290,12 @@ export default function Monitoring() {
           <p className='text-slate-200 font-notosans font-light text-sm'>No meter gauge</p>
         )}
       </div>
+      {/* Modal Meter Gauge */}
+      <ConfigurationMeterGauge 
+            isOpen={isConfigurationOpen}
+            onClose={()=> setIsConfigurationOpen(false)}
+            idMeterConfiguration={idMeterConfiguration}
+      />
     </div>
   );
 }
