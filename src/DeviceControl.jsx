@@ -2,12 +2,33 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import ModalAddButton from './ModalAddButton'; // Pastikan path benar
 import ConfigurationButton from './ConfigurationButton';
+import mqtt from 'mqtt';
 
 export default function DeviceControl() {
   const [switches, setSwitches] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const [idButtonConfiguration, setIdButtonConfiguration] = useState(null);
+  // MQTT state
+  const [mqttClient, setMqttClient] = useState(null);
+
+  // Load MQTT saat halaman pertama dirender:
+  useEffect(()=>{
+    const client = mqtt.connect('ws://broker.emqx.io:8083/mqtt');
+
+    client.on('connect', ()=>{
+      console.log('Connected to MQTT Broker via Websocket');
+      setMqttClient(client);
+    });
+
+    client.on('error', (err)=>{
+      console.error(`MQTT Connection Error: ${err}`);
+    });
+
+    return ()=>{
+      if(client) client.end();
+    }
+  }, []);
 
   const loadedDataButton = async () => {
     try {
@@ -52,6 +73,17 @@ export default function DeviceControl() {
     const itemSwitch = switches.find((sw) => sw.id == id);
     const newStatus = itemSwitch.status == 1 ? 0 : 1;
 
+    // Publish ke MQTT Wokwi:
+    if(mqttClient){
+      const topic = `/unnes/iot/button/${id}`;
+      const message = newStatus.toString();
+
+      mqttClient.publish(topic, message, {qos: 1},(err)=>{
+        if(err) console.error(`MQTT publish error: ${err}`);
+        else console.log(`Published ${message} to ${topic}`);
+      })
+    }
+
     // Optimistic Update UI
     setSwitches(switches.map((sw) => (sw.id == id ? { ...sw, status: newStatus } : sw)));
 
@@ -82,6 +114,9 @@ export default function DeviceControl() {
     setIdButtonConfiguration(id)
     console.log(`Id ${id}`)
   }
+
+  
+
 
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8">

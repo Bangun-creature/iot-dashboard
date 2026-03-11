@@ -7,7 +7,7 @@ export default function ConfigurationMeterGauge({isOpen, onClose, idMeterConfigu
       
       <div className="bg-slate-800 border border-slate-700 w-full max-w-md p-8 rounded-3xl z-10 shadow-2xl transform transition-all scale-100 animate-in zoom-in duration-200">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white mb-2 font-robotoflex">Button Pin: {idMeterConfiguration}</h2>
+          <h2 className="text-2xl font-bold text-white mb-2 font-robotoflex">Meter Gauge Id: {idMeterConfiguration}</h2>
           <p className="text-slate-400 text-sm">Ini konfigurasi path komunikasi MQTT:</p>
         </div>
         
