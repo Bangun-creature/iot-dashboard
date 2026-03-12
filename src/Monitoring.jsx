@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import GaugeComponent from 'react-gauge-component';
 import axios from 'axios';
 import ConfigurationMeterGauge from './ConfigurationMeterGauge';
+import mqtt from 'mqtt';
 
 export default function Monitoring() {
   // State untuk daftar sensor (Gauge)
@@ -114,6 +115,34 @@ export default function Monitoring() {
     setIdMeterConfiguration(id);
     console.log(`Id ${id}`)
   }
+
+  useEffect(()=>{
+    // Koneksi mqtt:
+    const client = mqtt.connect(`ws://broker.emqx.io:8083/mqtt`);
+
+    client.on('connect', ()=> {
+      console.log(`Succes Connecter to MQTT`);
+      client.subscribe('/unnes/iot-e/meter/+');
+    })
+
+    client.on('message', (topic, message)=>{
+      const topicPart = topic.split('/');
+      const incomingId = topicPart[topicPart.length - 1];
+      const newValue = parseFloat(message.toString());
+
+      console.log(`Id data: ${incomingId} -> value: ${newValue}`);
+
+      setGauges((prev)=>
+      prev.map((item)=>
+      item.id == incomingId ? {...item, value: newValue} : item
+      )
+      )
+    })
+
+    return()=>{
+      if(client) client.end()
+    }
+  },[])
 
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8">

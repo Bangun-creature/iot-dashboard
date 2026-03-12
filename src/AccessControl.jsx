@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import ModalRegisterCard from './ModalRegisterCard';
 import axios from 'axios';
+import ConfigurationRfid from './ConfigurationRfid';
+import mqtt from 'mqtt';
 
 export default function AccessControl() {
   // Data user terakhir yang melakukan TAP (Real-time Simulation)
@@ -20,7 +22,17 @@ export default function AccessControl() {
 
   const [listRfid, setListRfid] = useState([]);
 
+  const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+   function handleConfigurationOpen(id){
+    setIsConfigurationOpen(true);
+    setIdRfidConfiguration(id)
+    console.log(`Id RFID: ${id}`)
+  }
+
+  // id RFID Configuration:
+  const [idRfidConfiguration, setIdRfidConfiguration] = useState(null);
 
   const handleLoadListRfid = async()=>{
     try {
@@ -67,6 +79,25 @@ export default function AccessControl() {
     //   console.log(`There is an error in rfid save new user: ${error}`);
     // }
   };
+
+  useEffect(()=>{
+    handleLoadListRfid();
+
+    const client = mqtt.connect(`ws://broker.emqx.io:8083/mqtt`);
+
+    client.on('connect', ()=> {
+      console.log(`MQTT Connected in Acces Control`)
+      client.subscribe(`/unnes/iot-e/rfid`)
+    })
+
+    client.on('message', (topic, message)=>{
+      handleLoadListRfid();
+    })
+
+    return ()=>{
+      if(client) client.end();
+    }
+  }, [])
 
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-8">
@@ -132,14 +163,17 @@ export default function AccessControl() {
               <tbody className="divide-y divide-slate-700/50">
                 {listRfid.map((log) => (
                   <tr key={log.id} className="hover:bg-slate-700/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs">{log.updated_at}</td>
+                    <td className="px-4 py-4 font-mono text-xs flex gap-4">
+                      <p>{log.updated_at}</p>
+                      <button onClick={()=>{handleConfigurationOpen(log.id)}} className='text-slate-100 text-xs font-medium font-notosans bg-emerald-600 rounded-lg w-fit px-2 py-1'>Configuration</button>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="font-semibold text-slate-200">{log.username}</div>
                       <div className="text-[10px] text-slate-500 font-mono">{log.rfid_code}</div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase
-                        ${log.status === 'true' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                        ${log.status === 'true' ? 'bg-slate-100 text-blue-600' : 'bg-slate-100 text-red-500'}`}>
                         {log.status}
                       </span>
                     </td>
@@ -152,6 +186,12 @@ export default function AccessControl() {
 
       </div>
 )}
+<ConfigurationRfid 
+      isOpen={isConfigurationOpen}
+      onClose={()=> setIsConfigurationOpen(false)}
+      idRfidConfiguration={idRfidConfiguration}
+      />
+
     </div>
   );
 }
