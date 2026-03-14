@@ -90,7 +90,7 @@ export default function DeviceControl() {
     try {
       await axios.post(`http://localhost:3000/api/buttons/${id}/control`, {
         status: newStatus,
-        name: itemSwitch.name
+        name: itemSwitch.name,
       });
     } catch (error) {
       console.log(`Error toggling switch: ${error}`);

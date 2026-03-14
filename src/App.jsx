@@ -6,11 +6,15 @@ import Monitoring from "./Monitoring";
 import AccessControl from "./AccessControl";
 import Settings from "./Settings";
 import History from "./History";
+import LoginPage from "./auth/login/LoginPage";
 
 function App() {
   return (
     // overflow-hidden mencegah double scrollbar pada dashboard
     <Router>
+      <Routes>
+      <Route path="/login" element={<LoginPage/>} />
+      <Route path="/" element={
       <div className="w-full h-screen bg-slate-800 lg:grid lg:grid-cols-5 overflow-hidden">
         {/* Navbar tetap di sini agar selalu muncul */}
         <Navbar />
@@ -18,6 +22,7 @@ function App() {
         {/* Area utama dengan scroll mandiri */}
         <main className="lg:col-span-4 h-full overflow-y-auto bg-slate-900">
           <Routes>
+            
             <Route path="/" element={<Hero />} />
             <Route path="/device-control" element={<DeviceControl />} />
             <Route path="/monitoring" element={<Monitoring />} />
@@ -28,6 +33,9 @@ function App() {
           </Routes>
         </main>
       </div>
+      }>
+      </Route>
+      </Routes>
     </Router>
   );
 }
