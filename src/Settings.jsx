@@ -47,10 +47,6 @@ export default function Settings() {
                   <label className="text-slate-500 text-[10px] font-bold uppercase ml-1 tracking-widest">Port</label>
                   <input type="number" defaultValue="1883" className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:border-blue-500 outline-none transition-all font-mono text-sm" />
                 </div>
-                <div className="md:col-span-2 flex flex-col gap-2">
-                  <label className="text-slate-500 text-[10px] font-bold uppercase ml-1 tracking-widest">Base Topic</label>
-                  <input type="text" defaultValue="unnes/iot/device-01" className="bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:border-blue-500 outline-none transition-all font-mono text-sm" />
-                </div>
               </div>
             </div>
           )}

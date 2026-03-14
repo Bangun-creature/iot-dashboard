@@ -1,4 +1,5 @@
-export default function Hero() {
+export default function Hero({gauges}) {
+
   return (
     <div className="bg-slate-900 min-h-full pt-20 px-[5%] flex flex-col gap-5">
       {/* Header Content */}
@@ -23,16 +24,22 @@ export default function Hero() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-8">
   {/* Card 1: Power Status (Dari Meter Gauge) */}
   <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-xl">
-    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Avg Voltage</p>
-    <h2 className="text-3xl font-semibold text-white mt-2">218 <span className="text-sm text-slate-400">V</span></h2>
-    <div className="mt-2 text-xs text-green-500">● Stable</div>
+    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Meter Gauge</p>
+    <h2 className="text-3xl font-semibold text-white mt-2">5 <span className="text-sm text-slate-400">Meter Gauge</span></h2>
+    <div className="mt-2 text-xs">
+      <ul>
+      {gauges.map((item, index)=>(
+        <li key={index} className="text-slate-400">{index + 1}. {item.name}</li>
+      ))}
+      </ul>
+    </div>
   </div>
 
   {/* Card 2: Security Status (Dari RFID) */}
   <div className="bg-slate-800 p-6 rounded-3xl border border-slate-700 shadow-xl">
-    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Today's Access</p>
-    <h2 className="text-3xl font-semibold text-white mt-2">14 <span className="text-sm text-slate-400">Taps</span></h2>
-    <div className="mt-2 text-xs text-blue-500">Last: 5 mins ago</div>
+    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">RFID Access</p>
+    <h2 className="text-3xl font-semibold text-white mt-2">10 <span className="text-sm text-slate-400">Granted</span></h2>
+    <div className="mt-2 text-xs text-blue-500">10 Granted From 20 Rfid</div>
   </div>
 
   {/* Card 3: Active Switches (Dari Buttons) */}

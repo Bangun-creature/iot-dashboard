@@ -123,7 +123,7 @@ export default function History() {
                   <tr key={index} className="hover:bg-slate-700/30 transition-all">
                     <td className="px-8 py-5 font-mono text-xs text-slate-500">{item.updated_at}</td>
                     <td className="px-8 py-5 font-semibold text-slate-200">{item.username}<span className="block text-[10px] font-mono text-slate-500">{item.rfid_code}</span></td>
-                    <td className="px-8 py-5"><span className={`${item.status == "true" ? "bg-green-500/10 text-green-500" : "bg-slate-100 text-red-500"} px-3 py-1 rounded-full text-[10px] font-bold`}>{item.status == "true" ? "GRANTED" : "FALSE"}</span></td>
+                    <td className="px-8 py-5"><span className={`${item.status == "true" ? "bg-slate-100 text-green-500" : "bg-slate-100 text-red-500"} px-3 py-1 rounded-full text-[10px] font-bold`}>{item.status == "true" ? "GRANTED" : "FALSE"}</span></td>
                   </tr>
                 ))}
               </tbody>

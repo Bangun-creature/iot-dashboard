@@ -4,10 +4,9 @@ import axios from 'axios';
 import ConfigurationMeterGauge from './ConfigurationMeterGauge';
 import mqtt from 'mqtt';
 
-export default function Monitoring() {
-  // State untuk daftar sensor (Gauge)
-  const [gauges, setGauges] = useState([
-  ]);
+export default function Monitoring({gauges, setGauges}) {
+  // State untuk daftar sensor (Gauge) ada di atas (APP)
+ 
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [isConfigurationOpen, setIsConfigurationOpen] = useState(false);
